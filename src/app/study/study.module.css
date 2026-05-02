@@ -1,0 +1,165 @@
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+}
+
+.header {
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--bg-surface-border);
+}
+
+.title {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 1.125rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section {
+  margin-bottom: 4rem;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--accent-primary);
+}
+
+/* Notes section formatting */
+.notes {
+  background: var(--bg-surface);
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--bg-surface-border);
+  line-height: 1.8;
+  font-size: 1.125rem;
+}
+
+.notes h1, .notes h2, .notes h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--text-primary);
+}
+
+.notes p {
+  margin-bottom: 1rem;
+}
+
+/* Exercises */
+.exerciseCard {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--bg-surface-border);
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1rem;
+}
+
+.difficultyBadge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  background: var(--bg-surface-border);
+}
+
+/* Quiz */
+.quizCard {
+  background: var(--bg-surface);
+  border: 1px solid var(--bg-surface-border);
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+}
+
+.quizQuestion {
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.quizOption {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--bg-surface-border);
+  border-radius: var(--radius-md);
+  margin-bottom: 0.5rem;
+  transition: all var(--transition-fast);
+  color: var(--text-primary);
+}
+
+.quizOption:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.quizOption.selected {
+  background: rgba(99, 102, 241, 0.1);
+  border-color: var(--accent-primary);
+}
+
+.quizOption.correct {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: var(--success);
+}
+
+.quizOption.wrong {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: var(--error);
+}
+
+/* Project */
+.projectBox {
+  background: linear-gradient(145deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.05));
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+}
+
+/* Complete Button */
+.completeContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--bg-surface-border);
+}
+
+.completeButton {
+  background: var(--gradient-primary);
+  color: white;
+  padding: 1.25rem 3rem;
+  border-radius: var(--radius-full);
+  font-size: 1.25rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-glow);
+}
+
+.completeButton:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 0 30px rgba(99, 102, 241, 0.6);
+}
+
+.completeButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}

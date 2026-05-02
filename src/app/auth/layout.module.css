@@ -1,0 +1,69 @@
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.leftPane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background-color: var(--bg-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background subtle glow */
+.leftPane::before {
+  content: '';
+  position: absolute;
+  top: -20%;
+  left: -20%;
+  width: 140%;
+  height: 140%;
+  background: var(--gradient-glow);
+  filter: blur(120px);
+  opacity: 0.1;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.formContainer {
+  width: 100%;
+  max-width: 400px;
+  z-index: 1;
+}
+
+.rightPane {
+  flex: 1;
+  display: none;
+  background: var(--gradient-primary);
+  color: white;
+  padding: 4rem;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .rightPane {
+    display: flex;
+  }
+}
+
+.rightContent {
+  max-width: 500px;
+}
+
+.rightTitle {
+  font-size: 3rem;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  font-family: var(--font-heading);
+}
+
+.rightDesc {
+  font-size: 1.25rem;
+  opacity: 0.9;
+}
