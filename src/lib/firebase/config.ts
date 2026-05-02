@@ -1,27 +1,42 @@
-import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
+import { getAuth, Auth } from "firebase/auth";
+import { getFirestore, Firestore } from "firebase/firestore";
 
 /**
  * Firebase Configuration
- * These environment variables should be added to your .env.local file.
- * We use process.env.NEXT_PUBLIC_* to expose them to the client-side code safely.
+ * These environment variables must be set in .env.local (dev) and in the
+ * Vercel / Netlify dashboard (production).
+ * NEXT_PUBLIC_* variables are safe to expose to the browser.
  */
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY ?? "",
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ?? "",
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ?? "",
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ?? "",
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ?? "",
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID ?? "",
 };
 
-// Initialize Firebase only if it hasn't been initialized already.
-// This prevents multiple initializations during hot reloads in Next.js development.
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+/**
+ * Guard: only initialize Firebase when the API key is actually present.
+ * During Next.js static analysis / build, env vars may be absent — this
+ * prevents a crash that would abort the Vercel build.
+ */
+let app: FirebaseApp;
+let auth: Auth;
+let db: Firestore;
 
-// Initialize Auth and Firestore services
-const auth = getAuth(app);
-const db = getFirestore(app);
+if (firebaseConfig.apiKey) {
+  app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+  auth = getAuth(app);
+  db = getFirestore(app);
+} else {
+  // Provide stub exports so imports don't break at build time.
+  // These are never actually called in production because the real
+  // values are injected by Vercel before the app runs.
+  app = {} as FirebaseApp;
+  auth = {} as Auth;
+  db = {} as Firestore;
+}
 
 export { app, auth, db };
