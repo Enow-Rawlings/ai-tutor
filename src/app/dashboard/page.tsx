@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { Flame, BookOpen, Target, Clock } from "lucide-react";
@@ -14,6 +13,9 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState<any>(null);
   const [roadmap, setRoadmap] = useState<any>(null);
+  const [activeDay, setActiveDay] = useState<number>(1);
+  const [lessonLocked, setLessonLocked] = useState(false);
+  const [unlockMessage, setUnlockMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -31,6 +33,36 @@ export default function DashboardPage() {
           const data = userDocSnap.data();
           setUserData(data);
           
+          const streak = data.streakCount || 0;
+          const lastActiveValue = data.lastActiveDate;
+          const lastActiveDate = lastActiveValue?.toDate ? lastActiveValue.toDate() : lastActiveValue ? new Date(lastActiveValue) : null;
+
+          let nextDay = 1;
+          let locked = false;
+          let unlockText: string | null = null;
+
+          if (!lastActiveDate) {
+            nextDay = Math.max(1, streak + 1);
+          } else {
+            const elapsedHours = (Date.now() - lastActiveDate.getTime()) / (1000 * 60 * 60);
+            if (elapsedHours >= 24) {
+              nextDay = streak + 1;
+            } else {
+              nextDay = Math.max(1, streak);
+              if (streak > 0) {
+                locked = true;
+                const minutesRemaining = Math.ceil(Math.max(0, 24 * 60 - (Date.now() - lastActiveDate.getTime()) / 60000));
+                const hoursLeft = Math.floor(minutesRemaining / 60);
+                const minsLeft = minutesRemaining % 60;
+                unlockText = `Next lesson unlocks in ${hoursLeft}h ${minsLeft}m.`;
+              }
+            }
+          }
+
+          setActiveDay(nextDay);
+          setLessonLocked(locked);
+          setUnlockMessage(unlockText);
+
           if (!data.roadmapId) {
             router.push("/onboarding");
             return;
@@ -86,14 +118,33 @@ export default function DashboardPage() {
           <div className={`glass-panel ${styles.card}`}>
             <div className={styles.cardHeader}>
               <h2 className={styles.cardTitle}><Target className="text-accent" /> Today's Focus</h2>
-              <span className={styles.statusBadge} style={{ background: "var(--bg-surface-border)" }}>Day 1</span>
+              <span className={`${styles.statusBadge} ${lessonLocked ? styles.locked : styles.active}`}>
+                Day {activeDay} {lessonLocked ? "Locked" : "Available"}
+              </span>
             </div>
-            <p style={{ color: "var(--text-secondary)", marginBottom: "2rem" }}>
-              Ready to learn? Your AI tutor has prepared today's lesson, exercises, and mini-project based on your roadmap.
+            <p style={{ color: "var(--text-secondary)", marginBottom: "1rem" }}>
+              {lessonLocked
+                ? `You’ve completed Day ${userData.streakCount || 1}. Next day unlocks soon.`
+                : `You can continue to Day ${activeDay} now. Your AI tutor has prepared today's lesson, exercises, and mini-project.`}
             </p>
-            <Link href="/study" className={styles.primaryAction}>
-              Start Today's Lesson
-            </Link>
+            {unlockMessage && (
+              <>
+                <p style={{ color: "var(--warning)", marginBottom: "1rem" }}>{unlockMessage}</p>
+                <div className={styles.unlockBanner}>
+                  <strong>Unlock info</strong>
+                  <span>{unlockMessage}</span>
+                </div>
+              </>
+            )}
+            <button
+              type="button"
+              className={styles.primaryAction}
+              onClick={() => router.push("/study")}
+              disabled={lessonLocked}
+              style={{ opacity: lessonLocked ? 0.6 : 1, cursor: lessonLocked ? "not-allowed" : "pointer" }}
+            >
+              {lessonLocked ? "Next lesson locked" : "Start Today's Lesson"}
+            </button>
           </div>
 
           <div className={`glass-panel ${styles.card}`}>
